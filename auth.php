@@ -24,6 +24,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+var_dump(2);
 
 require_once("$CFG->libdir/formslib.php");
 
@@ -100,8 +101,8 @@ class auth_plugin_otp extends auth_plugin_base
      * @return bool Authentication success or failure.
      */
     public function user_login($username, $password) {
+        var_dump(2);
         global $CFG, $DB;
-
         $phone = $username;
         if ( empty($phone) || empty($password) ) {
             return false;
@@ -113,25 +114,27 @@ class auth_plugin_otp extends auth_plugin_base
             }
             else {
                 $sql = 'select * from {auth_otp_linked_login} where `phone` = ' . $username .' AND `confirmtoken` = '.$password;
-                $data = $DB->get_records_sql($sql);
+                $data = $DB->get_record_sql($sql);
+
                 if ($data){
-                    $_SESSION['auth_otp']['credentials'] = [];
+                    unset($_SESSION['auth_otp']['credentials']);
+                    $this->resetOtp($phone);
                     return true;
                 }
                 else{// otp missmatch
 
                     // count faild login
-                    $_SESSION[self::COMPONENT_NAME]['login_failed_count']++;
-                    if (!empty($this->config->revokethreshold) &&
-                        $_SESSION[self::COMPONENT_NAME]['login_failed_count'] >= $this->config->revokethreshold) {
-                        unset($_SESSION[self::COMPONENT_NAME]);
-                        \core\notification::add(get_string('otprevoked', self::COMPONENT_NAME),
-                            notification::NOTIFY_WARNING
-                        );
-                        \auth_emailotp\event\otp_revoked::create(array(
-                            'other' => array('email' => $email),
-                        ))->trigger();
-                    }
+//                    $_SESSION[self::COMPONENT_NAME]['login_failed_count']++;
+//                    if (!empty($this->config->revokethreshold) &&
+//                        $_SESSION[self::COMPONENT_NAME]['login_failed_count'] >= $this->config->revokethreshold) {
+//                        unset($_SESSION[self::COMPONENT_NAME]);
+//                        \core\notification::add(get_string('otprevoked', self::COMPONENT_NAME),
+//                            notification::NOTIFY_WARNING
+//                        );
+//                        \auth_otp\event\otp_revoked::create(array(
+//                            'other' => array('phone' => $phone),
+//                        ))->trigger();
+//                    }
 
                     return (bool) $this->redirect($username, 'otpmissmatch', notification::NOTIFY_INFO);
                 }
@@ -169,6 +172,11 @@ class auth_plugin_otp extends auth_plugin_base
         $url = "$CFG->wwwroot/auth/otp/login.php";
         redirect($url.'?username='.urlencode($username),
             get_string($msg, self::COMPONENT_NAME), null, $level);
+    }
+    public function resetOtp($phone){
+        global $DB;
+//        $data = $DB->execute("UPDATE {auth_otp_linked_login} SET `confirmtoken`= '',`otpcreated` = '' where `phone` = '" . $phone . "'");
+        return true;
     }
 
 }

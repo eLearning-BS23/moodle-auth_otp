@@ -1,5 +1,7 @@
 <?php
 require_once('../../config.php');
+
+defined('MOODLE_INTERNAL') || die();
 global $DB, $CFG;
 
 $digits = 6;
@@ -15,6 +17,7 @@ $data = $DB->get_records_sql($sql);
 
 if ($data) {
     $data = $DB->execute("UPDATE {auth_otp_linked_login} SET `confirmtoken`= " . $otp . ",`otpcreated` = '" . date("Y-m-d H:i:s") . "' where `phone` = '" . $_POST['phone'] . "'");
+    throw new Exception(1);
     callOtpFuncction($otp);
 } else {
     $sql = '';

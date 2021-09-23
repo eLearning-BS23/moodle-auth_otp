@@ -21,53 +21,91 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.1
  */
-define(['jquery','core/notification'], function($) {
-    $(document).ready(function ($,notification) {
-        $( "#sendotp" ).click(function() {
-            var phone = $('#phone').val();
-            if(phone){
-                var phoneno = /^\d{10}$/;
-                if((phoneno.test(phone)))
-                {
-                    $('#sendotp').attr('disabled','disabled');
-                    let timerOn = true;
-                    function timer(remaining) {
-                        var m = Math.floor(remaining / 60);
-                        var s = remaining % 60;
-                        m = m < 10 ? '0' + m : m;
-                        s = s < 10 ? '0' + s : s;
-                        document.getElementById('timer').innerHTML = m + ':' + s;
-                        remaining -= 1;
-                        if(remaining >= 0 && timerOn) {
-                            setTimeout(function() {
-                                timer(remaining);
-                            }, 1000);
-                            return;
-                        }
-                        if(!timerOn) {
-                            // Do validate stuff here
-                            return;
-                        }
-                        // Do timeout stuff here
-                        alert('Timeout for otp');
-                        $('#sendotp').removeAttr('disabled');
-                        document.getElementById('timer').innerHTML ='Resend Code';
+define(['jquery', 'core/ajax', 'core/notification'], function ($, Ajax, Notification) {
+
+    $("#sendotp").click(function () {
+        var withotcode = $('#phone').val();
+        // var phone = $('.iti__selected-dial-code').html() + $('#phone').val();
+        // phone = phone.replace("+", '');
+        // alert(phone);
+        var phone = $('#phone').val();
+        // ;
+        if (phone) {
+            var phoneno = /^\d{10}$/;
+            if (phoneno.test(phone)) {
+
+                let timerOn = true;
+
+                function timer(remaining) {
+                    var m = Math.floor(remaining / 60);
+                    var s = remaining % 60;
+                    m = m < 10 ? '0' + m : m;
+                    s = s < 10 ? '0' + s : s;
+                    document.getElementById('timer').innerHTML = m + ':' + s;
+                    remaining -= 1;
+                    if (remaining >= 0 && timerOn) {
+                        setTimeout(function () {
+                            timer(remaining);
+                        }, 1000);
+                        return;
                     }
-                    timer(300);
-                    $.ajax({
-                        url: "handleotp.php",
-                        method: "POST",
-                        data: {phone: phone},
-                        success: function (data) {
+                    if (!timerOn) {
+                        // Do validate stuff here
+                        return;
+                    }
+                    // Do timeout stuff here
+                    alert('Timeout for otp');
+                    $('#sendotp').removeAttr('disabled');
+                    document.getElementById('timer').innerHTML = 'Resend Code';
+                }
+                // API Call
+                var wsfunction = 'auth_otp_send_sms';
+                var params = {
+                    'phone': phone,
+                };
+
+                var request = {
+                    methodname: wsfunction,
+                    args: params
+                };
+
+                try {
+                    Ajax.call([request])[0].done(function (data) {
+                        if (data.warnings.length < 1) {
                             $('#otp-field').removeClass('d-none');
+                            $('#sendotp').attr('disabled', 'disabled');
+                            $('#phone').attr('disabled', 'disabled');
+                            $('#username').val(phone);
+                            timer(300);
+
+                            Notification.addNotification({
+                                message: data.message,
+                                type: 'error'
+                            });
+
+                        } else {
+                            Notification.addNotification({
+                                message: 'Something went wrong to send otp Please Try again !!',
+                                type: 'error'
+                            });
                         }
-                    });
+                    }).fail(Notification.exception);
+                } catch (e) {
+                    console.log(e);
                 }
-                else
-                {
-                    return false;
-                }
+            } else {
+                Notification.addNotification({
+                    message: 'insert Valid Phone number !!',
+                    type: 'error'
+                });
             }
-        });
+        } else {
+            Notification.addNotification({
+                message: 'phone number can\'t be empty',
+                type: 'error'
+            });
+
+        }
+        return false;
     });
 });

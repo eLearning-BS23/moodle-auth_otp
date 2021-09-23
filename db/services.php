@@ -15,17 +15,27 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Email OTP authentication plugin version information
+ * Services for the auth_otp plugin.
  *
- * @package    auth_emailotp
- * @copyright  2020 Pawel Suwinski <psuw@wp.pl>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    process_otp
+ * @copyright  2020 Brain Station 23
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
 
-defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2021091602;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2018120304;        // Requires this Moodle version.
-$plugin->component = 'auth_otp';   // Full name of the plugin (used for diagnostics).
-$plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = '1.0.1';
+defined('MOODLE_INTERNAL') || die;
+$functions = array(
+    'auth_otp_send_sms' => array(
+        'classname' => 'auth_otp_external',
+        'methodname' => 'send_otp',
+        'classpath'   => 'auth/otp/classes/externallib.php',
+        'loginrequired' => false,
+        'description' => 'Process otp and send sms.',
+        'type' => 'write',
+        'ajax' => true,
+        'capabilities' => '',// TODO: need to add capability.
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
+);
+
+
