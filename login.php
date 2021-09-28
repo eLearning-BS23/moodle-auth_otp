@@ -28,7 +28,7 @@ $PAGE->set_url('/courseteaser_admin/course_order.php');
 $PAGE->set_context(context_system::instance());
 $PAGE->set_title(get_string('pluginname', 'auth_otp'));
 echo $OUTPUT->header();
-$courseurl = $CFG->wwwroot . "/course/view.php";
+$courseurl = $CFG->wwwroot . "/my/";
 $SESSION->wantsurl = $courseurl;
 $token = \core\session\manager::get_login_token();
 $url = $CFG->wwwroot . "/login/index.php";
@@ -44,11 +44,28 @@ $url = $CFG->wwwroot . "/login/index.php";
         $PAGE->requires->js_call_amd('auth_otp/utils');
         $PAGE->requires->js_call_amd('auth_otp/implement');
         $PAGE->requires->js_call_amd('auth_otp/otp');
-        $usname= !empty($_GET['username']) ? $_GET['username'] : '';
+        $PAGE->requires->js_call_amd('auth_otp/timer', 'setup', array());
+
+        $timeout =true;
+        $otptimeoutval = '';
+        if (isset($_SESSION['auth_otp']['credentials'])){
+            $start = new DateTime(date("Y-m-d H:i:s"));
+            $end = new DateTime(date('Y-m-d H:i:s', strtotime('+5 minutes', strtotime($_SESSION['auth_otp']['credentials']['otpdatetime']))));
+            $diff = $end->diff($start);
+            $daysInSecs = $diff->format('%r%a') * 24 * 60 * 60;
+            $hoursInSecs = $diff->h * 60 * 60;
+            $minsInSecs = $diff->i * 60;
+            $seconds = $daysInSecs + $hoursInSecs + $minsInSecs + $diff->s;
+            if($diff->invert == 1 && $seconds <= get_config('auth_otp', 'minrequestperiod')){
+                $timeout =false;
+                $otptimeoutval = $seconds;
+            }
+            else{
+                unset($_SESSION['auth_otp']['credentials']);
+            }
+        }
+        $usname= !empty($_SESSION['auth_otp']['credentials']['username']) ? $_SESSION['auth_otp']['credentials']['country'].''.$_SESSION['auth_otp']['credentials']['username'] : '';
         ?>
-        <!--    <div class="alert alert-primary" role="alert">-->
-        <!--        --><?php //$_GET['error'] ? $errors[$_GET['error']] : ''?>
-        <!--    </div>-->
         <div class="d-flex justify-content-center">
             <div class="card">
                 <div class="card-block">
@@ -71,26 +88,18 @@ $url = $CFG->wwwroot . "/login/index.php";
                                         <label for="username" class="sr-only">
                                             Username
                                         </label>
-                                        <input type="tel" name="username" value="<?php echo $usname; ?>" placeholder="" required id="phone">
-
-                                        <?php
-                                        if(empty($usname)) {
-                                            ?>
-
+                                        <input type="tel" name="phone" id="phone" class="form-control" value="<?php echo $usname; ?>" placeholder="phone" autocomplete="phone">
+                                        <input type="hidden" name="username" value="<?php echo $usname; ?>" placeholder="" required id="username">
 
                                             <div class="display:flex">
-                                                <button type="button" id="sendotp">Send</button>
+                                                <button class="<?php if(!empty($usname)) { echo "d-none";} ?>" type="button" id="sendotp">Send</button>
                                                 <span id="timer"></span>
+                                                <input type="hidden" name="timeout" id="otptimeoutval" value="<?php echo $otptimeoutval; ?>">
                                             </div>
-
-                                            <?php
-
-                                        }
-                                        ?>
                                     </div>
                                     <div class="form-group <?php if(empty($usname)) { echo "d-none";} ?>" id="otp-field">
                                         <label for="password" class="sr-only">Otp</label>
-                                        <input type="text" name="password" id="password" value=""
+                                        <input type="text" required name="password" id="password" value=""
                                                class="form-control"
                                                placeholder="OTP">
                                     </div>
@@ -126,6 +135,31 @@ $url = $CFG->wwwroot . "/login/index.php";
         </div>
 
     </div>
+<!--    <script>-->
+<!--        let timerOn = true;-->
+<!--        function timer(remaining) {-->
+<!--            var m = Math.floor(remaining / 60);-->
+<!--            var s = remaining % 60;-->
+<!--            m = m < 10 ? '0' + m : m;-->
+<!--            s = s < 10 ? '0' + s : s;-->
+<!--            document.getElementById('timer').innerHTML = m + ':' + s;-->
+<!--            remaining -= 1;-->
+<!--            if (remaining >= 0 && timerOn) {-->
+<!--                setTimeout(function () {-->
+<!--                    timer(remaining);-->
+<!--                }, 1000);-->
+<!--                return;-->
+<!--            }-->
+<!--            if (!timerOn) {-->
+<!--                // Do validate stuff here-->
+<!--                return;-->
+<!--            }-->
+<!--            // Do timeout stuff here-->
+<!--            alert('Timeout for otp');-->
+<!--            $('#sendotp').removeAttr('disabled');-->
+<!--            document.getElementById('timer').innerHTML = 'Resend Code';-->
+<!--        }-->
+<!--    </script>-->
 <?php
 echo $OUTPUT->footer();
 

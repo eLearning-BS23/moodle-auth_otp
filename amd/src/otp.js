@@ -24,18 +24,15 @@
 define(['jquery', 'core/ajax', 'core/notification'], function ($, Ajax, Notification) {
 
     $("#sendotp").click(function () {
-        var withotcode = $('#phone').val();
-        // var phone = $('.iti__selected-dial-code').html() + $('#phone').val();
-        // phone = phone.replace("+", '');
-        // alert(phone);
+        var countrycode =$('.iti__selected-dial-code').html();
+        var fullphone =  countrycode + $('#phone').val();
+        $('input[name="full_number"]').val(fullphone);
         var phone = $('#phone').val();
         // ;
         if (phone) {
             var phoneno = /^\d{10}$/;
             if (phoneno.test(phone)) {
-
                 let timerOn = true;
-
                 function timer(remaining) {
                     var m = Math.floor(remaining / 60);
                     var s = remaining % 60;
@@ -57,11 +54,13 @@ define(['jquery', 'core/ajax', 'core/notification'], function ($, Ajax, Notifica
                     alert('Timeout for otp');
                     $('#sendotp').removeAttr('disabled');
                     document.getElementById('timer').innerHTML = 'Resend Code';
+                    $('#sendotp').removeClass('d-none');
                 }
                 // API Call
                 var wsfunction = 'auth_otp_send_sms';
                 var params = {
                     'phone': phone,
+                    'countrycode' : countrycode
                 };
 
                 var request = {
@@ -71,16 +70,17 @@ define(['jquery', 'core/ajax', 'core/notification'], function ($, Ajax, Notifica
 
                 try {
                     Ajax.call([request])[0].done(function (data) {
-                        if (data.warnings.length < 1) {
+                        if (data.success == 1) {
                             $('#otp-field').removeClass('d-none');
                             $('#sendotp').attr('disabled', 'disabled');
                             $('#phone').attr('disabled', 'disabled');
+                            $('#phone').val(phone);
                             $('#username').val(phone);
                             timer(300);
 
                             Notification.addNotification({
                                 message: data.message,
-                                type: 'error'
+                                type: 'success'
                             });
 
                         } else {

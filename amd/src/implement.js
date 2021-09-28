@@ -14,7 +14,7 @@ define(['jquery', 'jqueryui', 'core/notification', 'auth_otp/utils'], function (
             //     callback(countryCode);
             //   });
             // },
-            // hiddenInput: "full_number",
+            hiddenInput: "full_number",
             // initialCountry: "auto",
             // localizedCountries: { 'de': 'Deutschland' },
             // nationalMode: false,

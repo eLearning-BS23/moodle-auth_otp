@@ -10,6 +10,8 @@
                 <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The user account this oauth login is linked to."/>
                 <FIELD NAME="username" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The external username to map to this moodle account"/>
                 <FIELD NAME="phone" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The external Phone to map to this moodle account"/>
+                <FIELD NAME="fullphone" TYPE="char" LENGTH="25" NOTNULL="true" SEQUENCE="false" COMMENT="full Phone number"/>
+                <FIELD NAME="countrycode" TYPE="char" LENGTH="6" NOTNULL="true" SEQUENCE="false" COMMENT="Country Code"/>
                 <FIELD NAME="confirmtoken" TYPE="int" LENGTH="6" NOTNULL="false" SEQUENCE="false" COMMENT="Store Otp in Datatable"/>
                 <FIELD NAME="otpcreated" TYPE="datetime" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
             </FIELDS>
