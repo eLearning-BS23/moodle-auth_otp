@@ -49,6 +49,6 @@ You can download zip file and install or you can put file under auth as otp
 - Done!
 - 
 - <p align="left">
-<img src="https://i.imgur.com/9FCrpYR.png">
+<img src="https://i.imgur.com/DKIboXf.png">
 </p>
   
