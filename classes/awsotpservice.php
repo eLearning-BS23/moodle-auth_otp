@@ -12,8 +12,8 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * awsotpservice configuration.
  *
- * @package    auth_oauth2
- * @copyright  2017 Damyon Wiese
+ * @package    auth_otp
+ * @copyright  2021 Brain Station 23 ltd
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class awsotpservice implements otpmethods

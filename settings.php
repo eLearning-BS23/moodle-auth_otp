@@ -18,7 +18,7 @@
  * Admin settings and defaults
 
  * @package    auth_otp
- * @copyright  2020 Pawel Suwinski <psuw@wp.pl>
+ * @copyright  2021 Brain Station 23 ltd
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

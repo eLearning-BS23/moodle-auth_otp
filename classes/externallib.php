@@ -14,6 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * @package    auth_otp
+ * @copyright  2021 Brain Station 23 ltd
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 use auth_otp\awsotpservice;
 
 defined('MOODLE_INTERNAL') || die;

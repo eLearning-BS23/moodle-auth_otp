@@ -17,9 +17,9 @@
 /**
  * Open ID authentication. This file is a simple login entry point for OAuth identity providers.
  *
- * @package auth_oauth2
- * @copyright 2017 Damyon Wiese
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package    auth_otp
+ * @copyright  2021 Brain Station 23 ltd
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 require_once('../../config.php');
 global $DB, $OUTPUT, $CFG, $PAGE, $SITE;

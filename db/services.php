@@ -18,7 +18,7 @@
  * Services for the auth_otp plugin.
  *
  * @package    process_otp
- * @copyright  2020 Brain Station 23
+ * @copyright  2021 Brain Station 23
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
 

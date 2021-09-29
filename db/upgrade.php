@@ -18,7 +18,7 @@
  * DB authentication plugin upgrade code
  *
  * @package    auth_db
- * @copyright  2017 Stephen Bourget
+ * @copyright  2021 Brain Station 23 ltd
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
