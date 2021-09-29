@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="auth/otp/db" VERSION="2021051700" COMMENT="XMLDB file for Moodle auth/otp"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+    <TABLES>
+        <TABLE NAME="auth_otp_linked_login" COMMENT="Accounts linked to a users Moodle account.">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The user account this oauth login is linked to."/>
+                <FIELD NAME="username" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The external username to map to this moodle account"/>
+                <FIELD NAME="phone" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The external Phone to map to this moodle account"/>
+                <FIELD NAME="fullphone" TYPE="char" LENGTH="25" NOTNULL="true" SEQUENCE="false" COMMENT="full Phone number"/>
+                <FIELD NAME="countrycode" TYPE="char" LENGTH="6" NOTNULL="true" SEQUENCE="false" COMMENT="Country Code"/>
+                <FIELD NAME="confirmtoken" TYPE="int" LENGTH="6" NOTNULL="false" SEQUENCE="false" COMMENT="Store Otp in Datatable"/>
+                <FIELD NAME="otpcreated" TYPE="datetime" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+                <KEY NAME="userid_key" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+                <KEY NAME="uniq_key" TYPE="unique" FIELDS="username"/>
+            </KEYS>
+            <INDEXES>
+                <INDEX NAME="search_index" UNIQUE="false" FIELDS="username"/>
+            </INDEXES>
+        </TABLE>
+    </TABLES>
+</XMLDB>

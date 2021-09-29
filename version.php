@@ -15,18 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * version file for auth_otp.
+ * Email OTP authentication plugin version information
  *
- * @package    auth_otp
- * @copyright  2021 Brain Station 23 Ltd. <brainstation-23.com>
+ * @package    auth_emailotp
+ * @copyright  2020 Pawel Suwinski <psuw@wp.pl>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2021090100;  // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires = 2020110906; // Requires this Moodle version.
-$plugin->component = 'auth_otp'; // Full name of the plugin (used for diagnostics).
-$plugin->release = 'v1.0.0';
-$plugin->maturity = MATURITY_STABLE;
+$plugin->version   = 2021091604;        // The current plugin version (Date: YYYYMMDDXX).
+$plugin->requires  = 2018120304;        // Requires this Moodle version.
+$plugin->component = 'auth_otp';        // Full name of the plugin (used for diagnostics).
+$plugin->maturity  = MATURITY_STABLE;
+$plugin->release   = '1.0.1';
