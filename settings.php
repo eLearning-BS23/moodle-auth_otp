@@ -27,7 +27,6 @@ use auth_otp\awsotpservice;
 defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->fulltree) {
-
     $settings->add(new admin_setting_heading('auth_otp/security',
         new lang_string('security', 'admin'), ''));
 

@@ -164,8 +164,13 @@ class auth_otp_external extends external_api
             $secrect = get_config('auth_otp', 'aws_secrect');
             $region = get_config('auth_otp', 'aws_region');
             try {
-                \auth_otp\awsotpservice::sendOtp($otp, $phone, $key, $secrect, $region);
-                return ['status' => true, 'otp' => $otp, 'message' => get_string('otpsentsuccess', 'auth_otp')];
+                $sms = \auth_otp\awsotpservice::sendOtp($otp, $phone, $key, $secrect, $region);
+//                if (isset($sms['isOptedOut']) && $sms['isOptedOut'] == true){
+                    return ['status' => true, 'otp' => $otp, 'message' => get_string('otpsentsuccess', 'auth_otp')];
+//                }
+//                else{
+//                    return ['status' => false, 'otp' => $otp, 'message' => get_string('otpsenterror', 'auth_otp')];
+//                }
             } catch (Exception $e) {
                 print_r($e);
                 return ['status' => false, 'otp' => $otp, 'message' => get_string('otpsenterror', 'auth_otp')];
