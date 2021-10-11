@@ -35,11 +35,11 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_configtext('auth_otp/aws_key',
         get_string('awskey', 'auth_otp'),
-        get_string('awskey_help', 'auth_otp'), 'aws key', PARAM_TEXT));
+        get_string('awskey_help', 'auth_otp'), '', PARAM_TEXT));
 
     $settings->add(new admin_setting_configtext('auth_otp/aws_secrect',
         get_string('awssecrect', 'auth_otp'),
-        get_string('awssecrect_help', 'auth_otp'), 'aws secrect key', PARAM_TEXT));
+        get_string('awssecrect_help', 'auth_otp'), '', PARAM_TEXT));
     $settings->add(new admin_setting_configtext('auth_otp/aws_region',
         get_string('awsregion', 'auth_otp'),
         get_string('awsregion_help', 'auth_otp'), 'ap-northeast-1', PARAM_TEXT));
