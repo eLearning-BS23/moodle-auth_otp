@@ -27,7 +27,6 @@
  */
 namespace auth_otp;
 
-
 interface otpmethods
 {
     /**

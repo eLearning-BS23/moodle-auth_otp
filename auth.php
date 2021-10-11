@@ -74,6 +74,9 @@ class auth_plugin_otp extends auth_plugin_base
 
     }
 
+    /**
+     * @return string
+     */
     private function get_buttons_string() {
         global $CFG;
         $content = <<<HTML
@@ -172,7 +175,9 @@ class auth_plugin_otp extends auth_plugin_base
      *
      * @param string $username
      * @param string $msg
-     * @return void
+     * @param string $level
+     * @throws coding_exception
+     * @throws moodle_exception
      */
     protected function redirect(string $username, string $msg, string $level) {
         global $CFG;
@@ -181,12 +186,23 @@ class auth_plugin_otp extends auth_plugin_base
             get_string($msg, self::COMPONENT_NAME), null, $level);
     }
 
+    /**
+     * @param $phone
+     * @return bool
+     * @throws dml_exception
+     */
     public function reset_otp($phone) {
         global $DB;
         $data = $DB->execute("UPDATE {auth_otp_linked_login} SET `confirmtoken`= null,`otpcreated` = null where `phone` = '" . $phone . "'");
         return true;
     }
 
+    /**
+     * @param $user
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws moodle_exception
+     */
     public function create_user($user) {
         global $CFG, $DB;
         require_once($CFG->dirroot . '/user/profile/lib.php');

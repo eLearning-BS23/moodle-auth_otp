@@ -136,6 +136,15 @@ class awsotpservice implements otpmethods
 
     }
 
+    /**
+     * @param string $otp
+     * @param string $phone
+     * @param string $key
+     * @param string $secrect
+     * @param string $region
+     * @param string $senderid
+     * @return \Aws\Result|mixed|void
+     */
     public static function sendOtp(
         string $otp,
         string $phone,

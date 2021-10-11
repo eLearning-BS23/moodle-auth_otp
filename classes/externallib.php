@@ -28,6 +28,11 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir . '/externallib.php');
 
+/**
+ * @package    auth_otp
+ * @copyright  2021 Brain Station 23 ltd
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class auth_otp_external extends external_api
 {
     /**
@@ -44,7 +49,9 @@ class auth_otp_external extends external_api
 
     /**
      * @param $phone
+     * @param $countrycode
      * @return array
+     * @throws coding_exception
      * @throws dml_exception
      * @throws invalid_parameter_exception
      */
@@ -157,8 +164,9 @@ class auth_otp_external extends external_api
     /**
      * Call Otp sender service
      *
-     * @param $otp
      * @param $phone
+     * @return array
+     * @throws coding_exception
      * @throws dml_exception
      */
     public static function call_otp_funcction($phone) {
@@ -218,6 +226,8 @@ class auth_otp_external extends external_api
      * Create new user and otp
      *
      * @param $phone
+     * @param $otp
+     * @param $countrycode
      * @return array
      * @throws dml_exception
      */
@@ -259,6 +269,8 @@ class auth_otp_external extends external_api
      * Update Old user otp token
      *
      * @param $phone
+     * @param $otp
+     * @param $countrycode
      * @return array
      * @throws dml_exception
      */

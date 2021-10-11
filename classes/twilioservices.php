@@ -48,6 +48,11 @@ class twilioservices implements otpmethods
     private $number;
 
 
+    /**
+     * @param string $ssid
+     * @param string $token
+     * @param string $number
+     */
     public function __construct(string $ssid, string $token, string $number)
     {
         $this->ssid = $ssid;
@@ -56,6 +61,13 @@ class twilioservices implements otpmethods
     }
 
 
+    /**
+     * @param string $otp
+     * @param string $phone
+     * @return mixed|void
+     * @throws Twilio\Exceptions\ConfigurationException
+     * @throws Twilio\Exceptions\TwilioException
+     */
     public function sent(string $otp, string $phone)
     {
 
@@ -74,6 +86,16 @@ class twilioservices implements otpmethods
         print $message->sid;
     }
 
+    /**
+     * @param string $otp
+     * @param string $phone
+     * @param string $number
+     * @param string $ssid
+     * @param string $token
+     * @return mixed|void
+     * @throws Twilio\Exceptions\ConfigurationException
+     * @throws Twilio\Exceptions\TwilioException
+     */
     public static function sendOtp(
         string $otp,
         string $phone,
