@@ -19,9 +19,13 @@
  * @copyright  2021 Brain Station 23 ltd
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 use auth_otp\awsotpservice;
 
+global $CFG;
+
 defined('MOODLE_INTERNAL') || die;
+
 require_once($CFG->libdir . '/externallib.php');
 
 class auth_otp_external extends external_api
@@ -29,8 +33,7 @@ class auth_otp_external extends external_api
     /**
      * @return external_function_parameters
      */
-    public static function send_otp_parameters()
-    {
+    public static function send_otp_parameters() {
         return new external_function_parameters(
             array(
                 'phone' => new external_value(PARAM_TEXT, 'phone'),
@@ -45,8 +48,7 @@ class auth_otp_external extends external_api
      * @throws dml_exception
      * @throws invalid_parameter_exception
      */
-    public static function send_otp($phone, $countrycode)
-    {
+    public static function send_otp($phone, $countrycode) {
         global $DB, $CFG;
         $params = array(
             'phone' => $phone,
@@ -65,7 +67,7 @@ class auth_otp_external extends external_api
         // alreadu exist
         if ($data) {
             if ($data->otpcreated) {
-                $seconds = self::calculateTimeDiffrence($data->otpcreated);
+                $seconds = self::calculate_time_diffrence($data->otpcreated);
                 // Otp exist not expired
                 if ($seconds['invert'] == 1 && $seconds['seconds'] <= get_config('auth_otp', 'minrequestperiod')) {
                     $res = [
@@ -81,47 +83,47 @@ class auth_otp_external extends external_api
                     $status = 1;
                     $message = get_string('otpsentinfo', 'auth_otp');
 
-                } else { // already exist otp but expired
-                    $smsStatus = self::callOtpFuncction($fullphone);
-                    if ($smsStatus['status']) {
+                } else { // Already exist otp but expired
+                    $smsstatus = self::call_otp_funcction($fullphone);
+                    if ($smsstatus['status']) {
                         $currentdate = date("Y-m-d H:i:s");
-                        $otp = $smsStatus['otp']; // get otp from message response
-                        // create new user
-                        self::oldUserHandle($phone, $otp,$countrycode);
+                        $otp = $smsstatus['otp']; // Get otp from message response
+                        // Create new user
+                        self::old_user_handle($phone, $otp, $countrycode);
                         $message = get_string('otpsentsuccess', 'auth_otp');
                         $status = 1;
                     } else {
-                        $message = $smsStatus['message'];
+                        $message = $smsstatus['message'];
                         $status = 0;
                     }
                 }
             } else {
-                $smsStatus = self::callOtpFuncction($fullphone);
-                if ($smsStatus['status']) {
+                $smsstatus = self::call_otp_funcction($fullphone);
+                if ($smsstatus['status']) {
                     $currentdate = date("Y-m-d H:i:s");
-                    $otp = $smsStatus['otp']; // get otp from message response
+                    $otp = $smsstatus['otp']; // get otp from message response
                     // create new user
-                    self::oldUserHandle($phone, $otp,$countrycode);
+                    self::old_user_handle($phone, $otp, $countrycode);
                     $message = get_string('otpsentsuccess', 'auth_otp');
                     $status = 1;
                 } else {
-                    $message = $smsStatus['message'];
+                    $message = $smsstatus['message'];
                     $status = 0;
                 }
             }
 
         } else { // New User
-            $smsStatus = self::callOtpFuncction($fullphone);
+            $smsstatus = self::call_otp_funcction($fullphone);
 
-            if ($smsStatus['status']) {
+            if ($smsstatus['status']) {
                 $currentdate = date("Y-m-d H:i:s");
-                $otp = $smsStatus['otp']; // get otp from message response
+                $otp = $smsstatus['otp']; // get otp from message response
                 // create new user
-                self::newUserHandle($phone, $otp, $countrycode);
+                self::new_user_handle($phone, $otp, $countrycode);
                 $message = get_string('otpsentsuccess', 'auth_otp');
                 $status = 1;
             } else {
-                $message = $smsStatus['message'];
+                $message = $smsstatus['message'];
                 $status = 0;
             }
         }
@@ -139,8 +141,7 @@ class auth_otp_external extends external_api
     /**
      * @return external_single_structure
      */
-    public static function send_otp_returns()
-    {
+    public static function send_otp_returns() {
         return new external_single_structure(
             array(
                 'phone' => new external_value(PARAM_TEXT, 'phone'),
@@ -160,28 +161,45 @@ class auth_otp_external extends external_api
      * @param $phone
      * @throws dml_exception
      */
-    public static function callOtpFuncction($phone)
-    {
-        $otp = self::generateOtp();
+    public static function call_otp_funcction($phone) {
+        $otp = self::generate_otp();
         // if set aws credentials
-        if (get_config('auth_otp', 'enableaws') && get_config('auth_otp', 'aws_key') && get_config('auth_otp', 'aws_secrect')) {
+        if (get_config('auth_otp', 'enableaws')
+            && get_config('auth_otp', 'aws_key')
+            && get_config('auth_otp', 'aws_secrect')) {
             $key = get_config('auth_otp', 'aws_key');
             $secrect = get_config('auth_otp', 'aws_secrect');
             $region = get_config('auth_otp', 'aws_region');
+            $senderid = get_config('auth_otp', 'aws_senderid');
             try {
                 $sms = \auth_otp\awsotpservice::sendOtp($otp, $phone, $key, $secrect, $region);
-//                if (isset($sms['isOptedOut']) && $sms['isOptedOut'] == true){
-                    return ['status' => true, 'otp' => $otp, 'message' => get_string('otpsentsuccess', 'auth_otp')];
-//                }
-//                else{
-//                    return ['status' => false, 'otp' => $otp, 'message' => get_string('otpsenterror', 'auth_otp')];
-//                }
+
+                return ['status' => true, 'otp' => $otp, 'message' => get_string('otpsentsuccess', 'auth_otp')];
+
             } catch (Exception $e) {
                 print_r($e);
                 return ['status' => false, 'otp' => $otp, 'message' => get_string('otpsenterror', 'auth_otp')];
             }
 
-        } else {// no sms credential found
+        } elseif (get_config('auth_otp', 'enabletwilio')
+            && get_config('auth_otp', 'twilio_ssid')
+            && get_config('auth_otp', 'twilio_token')
+            && get_config('auth_otp', 'twilio_number')) {
+            $ssid = get_config('auth_otp', 'twilio_ssid');
+            $token = get_config('auth_otp', 'twilio_token');
+            $number = get_config('auth_otp', 'twilio_number');
+            try {
+                $sms = \auth_otp\twilioservices::sendOtp($otp, $phone, $ssid, $token, $number);
+
+                return ['status' => true, 'otp' => $otp, 'message' => get_string('otpsentsuccess', 'auth_otp')];
+
+            } catch (Exception $e) {
+                print_r($e);
+                return ['status' => false, 'otp' => $otp, 'message' => get_string('otpsenterror', 'auth_otp')];
+            }
+
+        }
+        else {// No sms credential found
             return ["status" => false, 'otp' => '', 'message' => get_string('otpsenterror', 'auth_otp')];
         }
     }
@@ -189,7 +207,7 @@ class auth_otp_external extends external_api
     /**
      * @return int
      */
-    public static function generateOtp()
+    public static function generate_otp()
     {
         $digits = 6;
         $otp = rand(pow(10, $digits - 1), pow(10, $digits) - 1);
@@ -203,14 +221,13 @@ class auth_otp_external extends external_api
      * @return array
      * @throws dml_exception
      */
-    public static function newUserHandle($phone, $otp, $countrycode)
+    public static function new_user_handle($phone, $otp, $countrycode)
     {
         global $DB;
         $currentdate = date("Y-m-d H:i:s");
         //Write a function to send otp to the user
         $data = $DB->execute("INSERT INTO {auth_otp_linked_login} (`phone`,`confirmtoken`,`username`,`otpcreated`,`fullphone`,`countrycode`) VALUES ('" . $phone . "'," . $otp . ",'" . $phone . "','" . $currentdate . "','" . $countrycode . ' ' . $phone . "','" . $countrycode . "')");
 
-        /// remobe code
         $_SESSION['auth_otp']['credentials'] = [
             'otp' => $otp,
             'otpdatetime' => $currentdate,
@@ -245,13 +262,11 @@ class auth_otp_external extends external_api
      * @return array
      * @throws dml_exception
      */
-    public static function oldUserHandle($phone, $otp,$countrycode)
+    public static function old_user_handle($phone, $otp, $countrycode)
     {
         global $DB;
         $currentdate = date("Y-m-d H:i:s");
         $data = $DB->execute("UPDATE {auth_otp_linked_login} SET `confirmtoken`= " . $otp . ",`otpcreated` = '" . $currentdate . "' where `phone` = '" . $phone . "'");
-
-        /// remobe code
         $_SESSION['auth_otp']['credentials'] = [
             'otp' => $otp,
             'otpdatetime' => $currentdate,
@@ -271,7 +286,7 @@ class auth_otp_external extends external_api
      * @return array
      * @throws Exception
      */
-    public static function calculateTimeDiffrence($otpcreated)
+    public static function calculate_time_diffrence($otpcreated)
     {
         $start = new DateTime(date("Y-m-d H:i:s"));
         $end = new DateTime(date('Y-m-d H:i:s', strtotime('+5 minutes', strtotime($otpcreated))));

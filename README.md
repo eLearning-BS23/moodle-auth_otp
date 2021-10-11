@@ -1,6 +1,6 @@
 # Moodle Auth One-Time Password Authentication plugin
 
-OTP plugin validates the user using the phone number and one-time password that send in their validated phone number. No users need to remember the password or any other credentials. There is no trouble registering a user. The new users are automatically registered by the system. Multiple OTP service supported Like AWS sms service, Twilio sms service etc
+OTP plugin validates the user using the phone number and one-time password that send in their validated phone number. No users need to remember the password or any other credentials. There is no trouble registering a user. The new users are automatically registered by the system. Multiple OTP service supported Like AWS sns service, TwilioTwilio sms service etc
 
 Additional security can be set:
 
@@ -47,8 +47,7 @@ You can download zip file and install or you can put file under auth as otp
   provide aws security key
 - if you want to use another service like Twilio then enable it and provide credentials
 - Done!
-- 
+-
 - <p align="left">
 <img src="https://i.imgur.com/DKIboXf.png">
 </p>
-  

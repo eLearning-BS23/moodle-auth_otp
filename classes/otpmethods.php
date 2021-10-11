@@ -1,5 +1,4 @@
 <?php
-namespace auth_otp;
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -14,7 +13,6 @@ namespace auth_otp;
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
 /**
  * Simple interface for receiving progress during long-running file
  * operations.
@@ -27,7 +25,11 @@ namespace auth_otp;
  * @copyright 2013 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-interface otpmethods {
+namespace auth_otp;
+
+
+interface otpmethods
+{
     /**
      * @return mixed
      */

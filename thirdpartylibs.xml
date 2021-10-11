@@ -50,9 +50,44 @@
         <licenseversion></licenseversion>
     </library>
     <library>
+        <location>thirdparty/vendor/symfony</location>
+        <name>PSR HTTP Message</name>
+        <version>4.4</version>
+        <license>MIT</license>
+        <licenseversion></licenseversion>
+    </library>
+    <library>
+        <location>amd/src/intltelInput</location>
+        <name>International Telephone Input</name>
+        <version>17.0.13</version>
+        <license>MIT</license>
+        <licenseversion></licenseversion>
+    </library>
+    <library>
+        <location>thirdparty/vendor/psr</location>
+        <name>PSR</name>
+        <version>1.0.1</version>
+        <license>MIT</license>
+        <licenseversion></licenseversion>
+    </library>
+    <library>
         <location>thirdparty/vendor/aws/aws-sdk-php</location>
         <name>AWS Php sdk</name>
         <version>1.0.2</version>
+        <license>MIT</license>
+        <licenseversion></licenseversion>
+    </library>
+    <library>
+        <location>thirdparty/vendor/twilio</location>
+        <name>Twilio sdk</name>
+        <version>1.0.2</version>
+        <license>MIT</license>
+        <licenseversion></licenseversion>
+    </library>
+    <library>
+        <location>thirdparty/vendor/mtdowling</location>
+        <name>mtdowling</name>
+        <version>2.6</version>
         <license>MIT</license>
         <licenseversion></licenseversion>
     </library>

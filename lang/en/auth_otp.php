@@ -56,26 +56,13 @@ $string['fieldsmapping_pattern'] = 'Pattern';
 $string['fieldsmapping_pattern_help'] = 'Capturing groups PCRE pattern.';
 $string['fieldsmapping_mapping'] = 'Mapping';
 $string['fieldsmapping_mapping_help'] = 'Mapping expressions.';
-$string['fieldsmapping_help'] = <<<'EOT'
-<p> Usage example:</p>
-
-Pattern:<br />
-<pre>
-#/(?P&lt;FIRST&gt;[^\.]+)\.(?P&lt;LAST&gt;[^@]+)@(?P&lt;COMPANY&gt;[^\.]+).*#
-</pre>
-
-Mapping:<br />
-<pre>
-firstname:FIRST:ucfirst
-lastname:LAST:ucfirst
-institution:COMPANY:strtoupper
-</pre>
-
-<p>maps <em>my.name@corp.com</em> to:</p>
-
-firstname: My<br />
-lastname: Name<br />
-institution: CORP<br />
-
-<p>Allowed modifiers: ucfirst, ucwords, strtoupper.</p>
-EOT;
+$string['awssenderid'] = 'AWS Sendeer id.';
+$string['awssenderid_help'] = 'User get sms with which identity';
+$string['enabletwilio'] = 'Enable Twilio SMS Service';
+$string['enabletwilio_help'] = 'Enable Twilio SMS Service and stop other services';
+$string['twiliossid'] = 'Twilio ssid';
+$string['twiliossid_help'] = 'Twilio ssid';
+$string['twiliotoken'] = 'Twilio Token';
+$string['twiliotoken_help'] = 'Twilio Token';
+$string['twilionumber'] = 'Twilio Number';
+$string['twilionumber_help'] = 'Twilio Registered Number';

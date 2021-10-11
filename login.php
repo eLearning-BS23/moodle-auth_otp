@@ -22,8 +22,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 require_once('../../config.php');
-global $DB, $OUTPUT, $CFG, $PAGE, $SITE;
+global $USER, $DB, $OUTPUT, $CFG, $PAGE, $SITE, $SESSION;
 
+if(isloggedin()){
+    return redirect($CFG->wwwroot.'/my');
+}
 $PAGE->set_url('/courseteaser_admin/course_order.php');
 $PAGE->set_context(context_system::instance());
 $PAGE->set_title(get_string('pluginname', 'auth_otp'));
@@ -36,35 +39,40 @@ $url = $CFG->wwwroot . "/login/index.php";
     <div>
         <style>
             <?php
-            include'otp_style.css';
+            require_once ('otp_style.css');
             ?>
         </style>
         <?php
         $PAGE->requires->js_call_amd('auth_otp/intltelInput');
-        $PAGE->requires->js_call_amd('auth_otp/utils');
+//        $PAGE->requires->js_call_amd('auth_otp/utils');
         $PAGE->requires->js_call_amd('auth_otp/implement');
         $PAGE->requires->js_call_amd('auth_otp/otp');
         $PAGE->requires->js_call_amd('auth_otp/timer', 'setup', array());
 
-        $timeout =true;
+        $timeout = true;
         $otptimeoutval = '';
-        if (isset($_SESSION['auth_otp']['credentials'])){
+        if (isset($_SESSION['auth_otp']['credentials'])) {
             $start = new DateTime(date("Y-m-d H:i:s"));
-            $end = new DateTime(date('Y-m-d H:i:s', strtotime('+5 minutes', strtotime($_SESSION['auth_otp']['credentials']['otpdatetime']))));
+            $end = new DateTime(
+                    date('Y-m-d H:i:s',
+                        strtotime('+5 minutes',
+                        strtotime($_SESSION['auth_otp']['credentials']['otpdatetime']))
+                    )
+            );
             $diff = $end->diff($start);
-            $daysInSecs = $diff->format('%r%a') * 24 * 60 * 60;
-            $hoursInSecs = $diff->h * 60 * 60;
-            $minsInSecs = $diff->i * 60;
-            $seconds = $daysInSecs + $hoursInSecs + $minsInSecs + $diff->s;
-            if($diff->invert == 1 && $seconds <= get_config('auth_otp', 'minrequestperiod')){
-                $timeout =false;
+            $daysinsecs = $diff->format('%r%a') * 24 * 60 * 60;
+            $hoursinsecs = $diff->h * 60 * 60;
+            $minsinsecs = $diff->i * 60;
+            $seconds = $daysinsecs + $hoursinsecs + $minsinsecs + $diff->s;
+            if ($diff->invert == 1 &&
+                $seconds <= get_config('auth_otp', 'minrequestperiod')) {
+                $timeout = false;
                 $otptimeoutval = $seconds;
-            }
-            else{
+            } else {
                 unset($_SESSION['auth_otp']['credentials']);
             }
         }
-        $usname= !empty($_SESSION['auth_otp']['credentials']['username']) ? $_SESSION['auth_otp']['credentials']['country'].''.$_SESSION['auth_otp']['credentials']['username'] : '';
+        $usname = !empty($_SESSION['auth_otp']['credentials']['username']) ? $_SESSION['auth_otp']['credentials']['country'] . '' . $_SESSION['auth_otp']['credentials']['username'] : '';
         ?>
         <div class="d-flex justify-content-center">
             <div class="card">
@@ -88,16 +96,24 @@ $url = $CFG->wwwroot . "/login/index.php";
                                         <label for="username" class="sr-only">
                                             Username
                                         </label>
-                                        <input type="tel" name="phone" id="phone" class="form-control" value="<?php echo $usname; ?>" placeholder="phone" autocomplete="phone">
-                                        <input type="hidden" name="username" value="<?php echo $usname; ?>" placeholder="" required id="username">
+                                        <input type="tel" name="phone" id="phone" class="form-control"
+                                               value="<?php echo $usname; ?>" placeholder="phone" autocomplete="phone">
+                                        <input type="hidden" name="username" value="<?php echo $usname; ?>"
+                                               placeholder="" required id="username">
 
-                                            <div class="display:flex">
-                                                <button class="<?php if(!empty($usname)) { echo "d-none";} ?>" type="button" id="sendotp">Send</button>
-                                                <span id="timer"></span>
-                                                <input type="hidden" name="timeout" id="otptimeoutval" value="<?php echo $otptimeoutval; ?>">
-                                            </div>
+                                        <div class="display:flex">
+                                            <button class="<?php if (!empty($usname)) {
+                                                echo "d-none";
+                                            } ?>" type="button" id="sendotp">Send
+                                            </button>
+                                            <span id="timer"></span>
+                                            <input type="hidden" name="timeout" id="otptimeoutval"
+                                                   value="<?php echo $otptimeoutval; ?>">
+                                        </div>
                                     </div>
-                                    <div class="form-group <?php if(empty($usname)) { echo "d-none";} ?>" id="otp-field">
+                                    <div class="form-group <?php if (empty($usname)) {
+                                        echo "d-none";
+                                    } ?>" id="otp-field">
                                         <label for="password" class="sr-only">Otp</label>
                                         <input type="text" required name="password" id="password" value=""
                                                class="form-control"
@@ -118,8 +134,13 @@ $url = $CFG->wwwroot . "/login/index.php";
                                     Cookies must be enabled in your browser
                                     <a class="btn btn-link p-0" role="button" data-container="body"
                                        data-toggle="popover"
-                                       data-placement="right" data-content="<div class=&quot;no-overflow&quot;><p>This site uses one session cookie, usually called MoodleSession. You must allow this cookie in your browser to provide continuity and to remain logged in when browsing the site. When you log out or close the browser, this cookie is destroyed (in your browser and on the server).</p>
-</div> " data-html="true" tabindex="0" data-trigger="focus">
+                                       data-placement="right" data-content="<div class=&quot;no-overflow&quot;>
+                                       <p>This site uses one session cookie, usually called MoodleSession.
+                                       You must allow this cookie in your browser to provide continuity and
+                                       to remain logged in when browsing the site. When you log out or
+                                       close the browser, this cookie is destroyed
+                                       (in your browser and on the server).</p></div>"
+                                       data-html="true" tabindex="0" data-trigger="focus">
                                         <i class="icon fa fa-question-circle text-info fa-fw "
                                            title="Help with Cookies must be enabled in your browser"
                                            aria-label="Help with Cookies must be enabled in your browser"></i>
@@ -135,131 +156,5 @@ $url = $CFG->wwwroot . "/login/index.php";
         </div>
 
     </div>
-<!--    <script>-->
-<!--        let timerOn = true;-->
-<!--        function timer(remaining) {-->
-<!--            var m = Math.floor(remaining / 60);-->
-<!--            var s = remaining % 60;-->
-<!--            m = m < 10 ? '0' + m : m;-->
-<!--            s = s < 10 ? '0' + s : s;-->
-<!--            document.getElementById('timer').innerHTML = m + ':' + s;-->
-<!--            remaining -= 1;-->
-<!--            if (remaining >= 0 && timerOn) {-->
-<!--                setTimeout(function () {-->
-<!--                    timer(remaining);-->
-<!--                }, 1000);-->
-<!--                return;-->
-<!--            }-->
-<!--            if (!timerOn) {-->
-<!--                // Do validate stuff here-->
-<!--                return;-->
-<!--            }-->
-<!--            // Do timeout stuff here-->
-<!--            alert('Timeout for otp');-->
-<!--            $('#sendotp').removeAttr('disabled');-->
-<!--            document.getElementById('timer').innerHTML = 'Resend Code';-->
-<!--        }-->
-<!--    </script>-->
 <?php
 echo $OUTPUT->footer();
-
-echo "<style>
-body {
-    margin: 0;
-    padding: 0;
-    background-color: #f1f1f1;
-}
-.box {
-    width: 1270px;
-    padding: 20px;
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    margin-top: 25px;
-}
-#page_list li {
-    padding: 16px;
-    background-color: #f9f9f9;
-    border: 1px dotted #ccc;
-    cursor: move;
-    margin-top: 12px;
-}
-#page_list li.ui-state-highlight {
-    padding: 24px;
-    background-color: #ffffcc;
-    border: 1px dotted #ccc;
-    cursor: move;
-    margin-top: 12px;
-}
-section#region-main{
-    background: transparent;
-}
-#page-header{
-    visibility: hidden;
-    background: transparent !important;
-}
-#page #page-content #region-main{
-    border-bottom: none !important;
-}
-.card{
-    width: 50%;
-}
-@media only screen and (max-width: 640px){
-    .card{
-        width: 100% !important;
-    }
-}
-@media only screen and (max-width: 1024px){
-    .card{
-        width: 75% !important;
-    }
-}
-
-* {
-  box-sizing: border-box;
-  -moz-box-sizing: border-box; }
-.iti__hide {
-  display: none; }
-pre {
-  margin: 0 !important;
-  display: inline-block; }
-.token.operator,
-.token.entity,
-.token.url,
-.language-css .token.string,
-.style .token.string,
-.token.variable {
-  background: none; }
-input, button {
-  height: 35px;
-  margin: 0;
-  padding: 6px 12px;
-  border-radius: 2px;
-  font-family: inherit;
-  font-size: 100%;
-  color: inherit; }
-  input[disabled], button[disabled] {
-    background-color: #eee; }
-input, select {
-  border: 1px solid #CCC;
-  width: 250px; }
-::-webkit-input-placeholder {
-  color: #BBB; }
-::-moz-placeholder {
-  /* Firefox 19+ */
-  color: #BBB;
-  opacity: 1; }
-:-ms-input-placeholder {
-  color: #BBB; }
-button {
-  color: #FFF;
-  background-color: #428BCA;
-  border: 1px solid #357EBD; }
-  button:hover {
-    background-color: #3276B1;
-    border-color: #285E8E;
-    cursor: pointer; }
-#result {
-  margin-bottom: 100px; }
-  
-</style>";

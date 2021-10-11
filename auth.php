@@ -24,16 +24,17 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
-require_once("$CFG->libdir/formslib.php");
-
 defined('MOODLE_INTERNAL') || die();
+
 global $CFG;
+
+require_once($CFG->libdir . "/formslib.php");
+
 require_once($CFG->libdir . '/formslib.php');
+
 require_once($CFG->libdir . '/authlib.php');
 
 use core\output\notification;
-
 
 /**
  * Phone OTP authentication plugin.
@@ -55,8 +56,7 @@ class auth_plugin_otp extends auth_plugin_base
     /**
      * Constructor.
      */
-    public function __construct()
-    {
+    public function __construct(){
         $this->authtype = 'otp';
         $this->config = get_config(self::COMPONENT_NAME);
     }
@@ -64,11 +64,8 @@ class auth_plugin_otp extends auth_plugin_base
     /**
      * Hook for overriding behaviour of login page.
      *  */
-    function loginpage_hook()
-    {
-        global $PAGE, $OUTPUT, $CFG, $frm, $user;
-//        $renderable =  new tool_policy\output\guestconsent();
-//        echo $renderable->render();
+    function loginpage_hook(){
+        global $PAGE, $CFG;
         $PAGE->requires->jquery();
         $PAGE->requires->js_init_code("buttonsAddMethod = 'auto';");
         $content = str_replace(array("\n", "\r"), array("\\\n", "\\\r",), $this->get_buttons_string());
@@ -77,8 +74,7 @@ class auth_plugin_otp extends auth_plugin_base
 
     }
 
-    private function get_buttons_string()
-    {
+    private function get_buttons_string() {
         global $CFG;
         $content = <<<HTML
             <!-- Elcentra content starts -->
@@ -99,9 +95,8 @@ class auth_plugin_otp extends auth_plugin_base
      * @param string $password The password
      * @return bool Authentication success or failure.
      */
-    public function user_login($username, $password)
-    {
-        global $CFG, $DB;
+    public function user_login($username, $password) {
+        global $DB;
         $username = substr($username, -10);
         $phone = $username;
         if (empty($phone) || empty($password)) {
@@ -111,7 +106,8 @@ class auth_plugin_otp extends auth_plugin_base
         if (isset($_SESSION[self::COMPONENT_NAME])) {
             if (empty($password)) {
                 return (bool)$this->redirect($username, 'otpsent', notification::NOTIFY_INFO);
-            } else {
+            }
+            else {
                 $sql = 'select * from {auth_otp_linked_login} where `phone` = ' . $username . ' AND `confirmtoken` = ' . $password;
                 $data = $DB->get_record_sql($sql);
 
@@ -132,18 +128,18 @@ class auth_plugin_otp extends auth_plugin_base
                         $this->create_otp_user($user);
                     }
                     unset($_SESSION['auth_otp']['credentials']);
-                    $this->resetOtp($phone);
+                    $this->reset_otp($phone);
                     return true;
-                } else {// otp missmatch
-                    isset($_SESSION['login_failed_count']) ?  $_SESSION['login_failed_count']=$_SESSION['login_failed_count'] : $_SESSION['login_failed_count']= 0;
+                } else {// Otp missmatch
+                    isset($_SESSION['login_failed_count']) ? $_SESSION['login_failed_count'] = $_SESSION['login_failed_count'] : $_SESSION['login_failed_count'] = 0;
                     $_SESSION['login_failed_count'] += 1;
 
-                    // count faild login
+                    // Count faild login
                     if (!empty($this->config->revokethreshold) &&
                         $_SESSION['login_failed_count'] >= $this->config->revokethreshold) {
                         unset($_SESSION['login_failed_count']);
                         unset($_SESSION['auth_otp']['credentials']);
-                        $this->resetOtp($phone);
+                        $this->reset_otp($phone);
                         return (bool)$this->redirect($username, 'otprevoked', notification::NOTIFY_INFO);
                     }
 
@@ -151,19 +147,17 @@ class auth_plugin_otp extends auth_plugin_base
                 }
             }
         }
-//        return false;
     }
 
     /**
-     * get_user_field
+     * Get user field
      *
      * @param string $username
      * @param string $field
      * @return mixed
      * @see moodle_database::get_field()
      */
-    protected function get_user_field(string $username, string $field)
-    {
+    protected function get_user_field(string $username, string $field) {
         global $CFG, $DB;
         return $DB->get_field('user', $field, array(
             'username' => $username,
@@ -174,30 +168,27 @@ class auth_plugin_otp extends auth_plugin_base
     }
 
     /**
-     * redirect
+     * Redirect
      *
      * @param string $username
      * @param string $msg
      * @return void
      */
-    protected function redirect(string $username, string $msg, string $level)
-    {
+    protected function redirect(string $username, string $msg, string $level) {
         global $CFG;
         $url = "$CFG->wwwroot/auth/otp/login.php";
         redirect($url . '?username=' . urlencode($username),
             get_string($msg, self::COMPONENT_NAME), null, $level);
     }
 
-    public function resetOtp($phone)
-    {
+    public function reset_otp($phone) {
         global $DB;
         $data = $DB->execute("UPDATE {auth_otp_linked_login} SET `confirmtoken`= null,`otpcreated` = null where `phone` = '" . $phone . "'");
         return true;
     }
 
-    public function create_user($user)
-    {
-        global $CFG, $PAGE, $OUTPUT, $DB;
+    public function create_user($user) {
+        global $CFG, $DB;
         require_once($CFG->dirroot . '/user/profile/lib.php');
         require_once($CFG->dirroot . '/user/lib.php');
         require_once($CFG->dirroot . '/user/editlib.php');
