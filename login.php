@@ -102,7 +102,7 @@ $url = $CFG->wwwroot . "/login/index.php";
                                                placeholder="" required id="username">
 
                                         <div class="display:flex">
-                                            <button class="<?php if (!empty($usname)) {
+                                            <button class="btn btn-primary mt-1 <?php if (!empty($usname)) {
                                                 echo "d-none";
                                             } ?>" type="button" id="sendotp">Send
                                             </button>
