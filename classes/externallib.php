@@ -67,7 +67,7 @@ class auth_otp_external extends external_api
         $fullphone = strval($countrycode) . '' . strval($phone);
 
         // check user exist and last otp time
-        $sql = 'select * from {auth_otp_linked_login} where `phone` = ' . $phone;
+        $sql = 'select * from {auth_otp_linked_login} where phone = ' . $phone;
         $data = $DB->get_record_sql($sql);
         $otp = null;
         $currentdate = '';
@@ -182,8 +182,10 @@ class auth_otp_external extends external_api
             try {
                 $sms = \auth_otp\awsotpservice::sendOtp($otp, $phone, $key, $secrect, $region);
 
-                return ['status' => true, 'otp' => $otp, 'message' => get_string('otpsentsuccess', 'auth_otp')];
-
+                if($sms == 'success'){
+                    return ['status' => true, 'otp' => $otp, 'message' => get_string('otpsentsuccess', 'auth_otp')];
+                }
+                return ['status' => false, 'otp' => $otp, 'message' => $sms];
             } catch (Exception $e) {
                 print_r($e);
                 return ['status' => false, 'otp' => $otp, 'message' => get_string('otpsenterror', 'auth_otp')];
@@ -236,7 +238,7 @@ class auth_otp_external extends external_api
         global $DB;
         $currentdate = date("Y-m-d H:i:s");
         //Write a function to send otp to the user
-        $data = $DB->execute("INSERT INTO {auth_otp_linked_login} (`phone`,`confirmtoken`,`username`,`otpcreated`,`fullphone`,`countrycode`) VALUES ('" . $phone . "'," . $otp . ",'" . $phone . "','" . $currentdate . "','" . $countrycode . ' ' . $phone . "','" . $countrycode . "')");
+        $data = $DB->execute("INSERT INTO {auth_otp_linked_login} (phone,confirmtoken,username,otpcreated,fullphone,countrycode) VALUES ('" . $phone . "'," . $otp . ",'" . $phone . "','" . $currentdate . "','" . $countrycode . ' ' . $phone . "','" . $countrycode . "')");
 
         $_SESSION['auth_otp']['credentials'] = [
             'otp' => $otp,
@@ -278,7 +280,7 @@ class auth_otp_external extends external_api
     {
         global $DB;
         $currentdate = date("Y-m-d H:i:s");
-        $data = $DB->execute("UPDATE {auth_otp_linked_login} SET `confirmtoken`= " . $otp . ",`otpcreated` = '" . $currentdate . "' where `phone` = '" . $phone . "'");
+        $data = $DB->execute("UPDATE {auth_otp_linked_login} SET confirmtoken= " . $otp . ",otpcreated = '" . $currentdate . "' where phone = '" . $phone . "'");
         $_SESSION['auth_otp']['credentials'] = [
             'otp' => $otp,
             'otpdatetime' => $currentdate,

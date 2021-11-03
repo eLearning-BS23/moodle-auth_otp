@@ -84,12 +84,11 @@ class awsotpservice implements otpmethods
             ],
         ]);
 
-        /** Message data & Phone number that we want to send */
-        $message = 'This is your One time password: ' . $otp;
-
         /** NOTE: Make sure to put the country code properly else SMS wont get delivered */
 
         try {
+            /** Message data & Phone number that we want to send */
+            $message = 'This is your One time password: ' . $otp;
             /** Few setting that you should not forget */
             $result = $SnSclient->publish([
                 'MessageAttributes' => [
@@ -109,31 +108,37 @@ class awsotpservice implements otpmethods
                 'PhoneNumber' => $phone,
             ]);
             /* Dump the output for debugging */
-            return $result;
+            return 'success';
         } catch (AwsException $e) {
             // output error message if fails
             switch ($e->getAwsErrorCode()) {
                 case 'EndpointDisabled':
-
                 case 'InvalidParameter':
-                    $message = 'Invalid parameter: Empty message';
+                    $message = get_string('InvalidParameter','auth_otp');
+                    return $message;
                     break;
-
                 case 'InvalidClientTokenId':
-                    $message = 'The Key included in the request is invalid';
+                    $message = get_string('InvalidClientTokenId','auth_otp');
+                    return $message;
+                    break;
+                case 'IncompleteSignature':
+                    $message = get_string('IncompleteSignature','auth_otp');
+                    return $message;
                     break;
 
                 case 'SignatureDoesNotMatch':
-                    $message = 'The Secrect token included in the request is invalid';
+                    $message = get_string('SignatureDoesNotMatch','auth_otp');
+                    return $message;
                     break;
 
                 case 'NotFound':
-                    $message = 'Invalid request';
+                    $message = get_string('NotFound','auth_otp');
+                    return $message;
                     break;
-            }
-//            echo $message;
-        }
 
+            }
+
+        }
     }
 
     /**

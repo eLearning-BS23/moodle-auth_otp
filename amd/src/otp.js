@@ -30,8 +30,9 @@ define(['jquery', 'core/ajax', 'core/notification'], function ($, Ajax, Notifica
         var phone = $('#phone').val();
         // ;
         if (phone) {
-            var phoneno = /^\d{10}$/;
-            if (phoneno.test(phone)) {
+            alert(fullphone);
+            var phoneno = /^\+[1-9]{1}[0-9]{3,14}$/;
+            if (phoneno.test(fullphone)) {
                 let timerOn = true;
                 function timer(remaining) {
                     var m = Math.floor(remaining / 60);

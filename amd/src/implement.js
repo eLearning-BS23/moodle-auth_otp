@@ -1,3 +1,11 @@
+/**
+ * Javascript controller for the "Actions" panel at the bottom of the page.
+ *
+ * @module     auth_otp/otp
+ * @copyright  2021 Brain station 23 <damyon@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since      3.1
+ */
 define(['jquery', 'jqueryui', 'core/notification', 'auth_otp/utils'], function ($) {
     $(document).ready(function () {
         var input = document.querySelector("#phone");
