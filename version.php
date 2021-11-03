@@ -28,4 +28,4 @@ $plugin->version   = 2021101111;        // The current plugin version (Date: YYY
 $plugin->requires  = 2018120304;        // Requires this Moodle version.
 $plugin->component = 'auth_otp';        // Full name of the plugin (used for diagnostics).
 $plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = '1.0.2';
+$plugin->release   = '1.0.3';
