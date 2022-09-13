@@ -79,13 +79,13 @@ class auth_plugin_otp extends auth_plugin_base
      */
     private function get_buttons_string() {
         global $CFG;
-        $content = <<<HTML
-            <!-- Elcentra content starts -->
-            <div class="moreproviderlink">
-                <a class="btn btn-primary btn-block mt-3" href="{$CFG->wwwroot}/auth/otp/login.php">Otp Login</a> <br>
-            </div>
-            <!-- Elcentra content ends -->
-        HTML;
+
+        $link = $CFG->wwwroot.'/auth/otp/login.php';
+        $content = '<div class="moreproviderlink">
+                        <a class="btn btn-primary btn-block mt-3" 
+                        href="'.$link.'" >'.get_string("otpbutton", "auth_otp") .'</a> <br>
+                    </div>';
+
         return $content;
     }
 
@@ -111,7 +111,9 @@ class auth_plugin_otp extends auth_plugin_base
                 return (bool)$this->redirect($username, 'otpsent', notification::NOTIFY_INFO);
             }
             else {
-                $sql = 'select * from {auth_otp_linked_login} where phone = ' . $username . ' AND confirmtoken = ' . $password;
+                $sql = 'SELECT *
+                        FROM {auth_otp_linked_login}
+                        WHERE phone = ' . $username . ' AND confirmtoken = ' . $password;
                 $data = $DB->get_record_sql($sql);
 
                 if ($data) {
@@ -194,6 +196,8 @@ class auth_plugin_otp extends auth_plugin_base
     public function reset_otp($phone) {
         global $DB;
         $data = $DB->execute("UPDATE {auth_otp_linked_login} SET confirmtoken = null, otpcreated = null where phone = '" . $phone . "'");
+
+
         return true;
     }
 
