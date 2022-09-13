@@ -112,7 +112,7 @@ class auth_plugin_otp extends auth_plugin_base
             }
             else {
                 $sql = 'select * from {auth_otp_linked_login} where phone = ' . $username . ' AND confirmtoken = ' . $password;
-                $data = $DB->get_record_sql($sql);
+                $data = $DB->get_record_sql($sql, array('phone' => $username, 'confirmtoken' => $password));
 
                 if ($data) {
                     $rec = $DB->get_record('user', array('username' => $username, 'auth' => 'otp'));
@@ -193,7 +193,15 @@ class auth_plugin_otp extends auth_plugin_base
      */
     public function reset_otp($phone) {
         global $DB;
-        $data = $DB->execute("UPDATE {auth_otp_linked_login} SET confirmtoken = null, otpcreated = null where phone = '" . $phone . "'");
+
+        $SQL = 'SELECT * FROM {auth_otp_linked_login} where phone =:phone';
+        $data = $DB->get_records_sql($SQL, ['phone' => $phone]);
+
+        $data->confirmtoken = null;
+        $data->otpcreated = null;
+
+        $DB->update_record('auth_otp_linked_login', $data);
+
         return true;
     }
 

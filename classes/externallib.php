@@ -68,7 +68,8 @@ class auth_otp_external extends external_api
 
         // check user exist and last otp time
         $sql = 'select * from {auth_otp_linked_login} where phone = ' . $phone;
-        $data = $DB->get_record_sql($sql);
+        $data = $DB->get_record_sql($sql, ['phone' => $phone]);
+
         $otp = null;
         $currentdate = '';
         // alreadu exist
@@ -238,7 +239,16 @@ class auth_otp_external extends external_api
         global $DB;
         $currentdate = date("Y-m-d H:i:s");
         //Write a function to send otp to the user
-        $data = $DB->execute("INSERT INTO {auth_otp_linked_login} (phone,confirmtoken,username,otpcreated,fullphone,countrycode) VALUES ('" . $phone . "'," . $otp . ",'" . $phone . "','" . $currentdate . "','" . $countrycode . ' ' . $phone . "','" . $countrycode . "')");
+
+        $data = new stdClass();
+        $data->phone = $phone;
+        $data->confirmtoken = $otp;
+        $data->username =  $phone;
+        $data->otpcreated =  $currentdate;
+        $data->fullphone =  $countrycode.$phone;
+        $data->countrycode =  $countrycode;
+
+        $DB->insert_record('auth_otp_linked_login', $data);
 
         $_SESSION['auth_otp']['credentials'] = [
             'otp' => $otp,
@@ -280,7 +290,17 @@ class auth_otp_external extends external_api
     {
         global $DB;
         $currentdate = date("Y-m-d H:i:s");
-        $data = $DB->execute("UPDATE {auth_otp_linked_login} SET confirmtoken= " . $otp . ",otpcreated = '" . $currentdate . "' where phone = '" . $phone . "'");
+
+        $SQL = 'SELECT * 
+                FROM {auth_otp_linked_login}
+                WHERE phone =:phone';
+
+        $data = $DB->get_record($SQL, array('phone' => $phone));
+        $data->confirmtoken = $otp;
+        $data->otpcreated = $currentdate;
+
+        $DB->update_record('auth_otp_linked_login', $data);
+
         $_SESSION['auth_otp']['credentials'] = [
             'otp' => $otp,
             'otpdatetime' => $currentdate,
@@ -311,5 +331,4 @@ class auth_otp_external extends external_api
         $seconds = $daysInSecs + $hoursInSecs + $minsInSecs + $diff->s;
         return ['invert' => $diff->invert, 'seconds' => $seconds];
     }
-
 }
