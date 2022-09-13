@@ -131,15 +131,11 @@ $url = $CFG->wwwroot . "/login/index.php";
                                             username or password?</a></p>
                                 </div>
                                 <div class="mt-3">
-                                    Cookies must be enabled in your browser
+                                <?php get_string('cookie', 'auth_otp'); ?>
                                     <a class="btn btn-link p-0" role="button" data-container="body"
                                        data-toggle="popover"
                                        data-placement="right" data-content="<div class=&quot;no-overflow&quot;>
-                                       <p>This site uses one session cookie, usually called MoodleSession.
-                                       You must allow this cookie in your browser to provide continuity and
-                                       to remain logged in when browsing the site. When you log out or
-                                       close the browser, this cookie is destroyed
-                                       (in your browser and on the server).</p></div>"
+                                       <p>".<?php get_string('cookie_desc', 'auth_otp'); ?> ."</p></div>"
                                        data-html="true" tabindex="0" data-trigger="focus">
                                         <i class="icon fa fa-question-circle text-info fa-fw "
                                            title="Help with Cookies must be enabled in your browser"

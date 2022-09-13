@@ -71,3 +71,10 @@ $string['InvalidClientTokenId'] = 'The Key included in the request is invalid';
 $string['SignatureDoesNotMatch'] = 'The Secrect token included in the request is invalid';
 $string['NotFound'] = 'Invalid request';
 $string['IncompleteSignature'] = 'Wrong Credential please check aws credentials';
+$string['cookie'] = 'Cookies must be enabled in your browser';
+$string['cookie_desc'] = 'This site uses one session cookie, usually called MoodleSession.
+                          You must allow this cookie in your browser to provide continuity and
+                          to remain logged in when browsing the site. When you log out or
+                          close the browser, this cookie is destroyed
+                          (in your browser and on the server).';
+$string['otpbutton'] = 'OTP Login';

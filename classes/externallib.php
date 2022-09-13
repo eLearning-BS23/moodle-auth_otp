@@ -238,7 +238,17 @@ class auth_otp_external extends external_api
         global $DB;
         $currentdate = date("Y-m-d H:i:s");
         //Write a function to send otp to the user
-        $data = $DB->execute("INSERT INTO {auth_otp_linked_login} (phone,confirmtoken,username,otpcreated,fullphone,countrycode) VALUES ('" . $phone . "'," . $otp . ",'" . $phone . "','" . $currentdate . "','" . $countrycode . ' ' . $phone . "','" . $countrycode . "')");
+//        $data = $DB->execute("INSERT INTO {auth_otp_linked_login} (phone,confirmtoken,username,otpcreated,fullphone,countrycode) VALUES ('" . $phone . "'," . $otp . ",'" . $phone . "','" . $currentdate . "','" . $countrycode . ' ' . $phone . "','" . $countrycode . "')");
+
+        $data = new stdClass();
+        $data->phone = $phone;
+        $data->confirmtoken = $otp;
+        $data->username =  $phone;
+        $data->otpcreated =  $currentdate;
+        $data->fullphone =  $countrycode.$phone;
+        $data->countrycode =  $countrycode;
+
+        $DB->insert_record('auth_otp_linked_login', $data);
 
         $_SESSION['auth_otp']['credentials'] = [
             'otp' => $otp,
