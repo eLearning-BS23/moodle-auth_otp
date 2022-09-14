@@ -78,3 +78,11 @@ $string['cookie_desc'] = 'This site uses one session cookie, usually called Mood
                           close the browser, this cookie is destroyed
                           (in your browser and on the server).';
 $string['otpbutton'] = 'OTP Login';
+$string['cookie_help'] = 'Help with Cookies must be enabled in your browser';
+$string['forgot'] = 'Forgotten your username or password?';
+$string['login'] = 'Log in';
+$string['otp'] = 'OTP';
+$string['send'] = 'Send';
+$string['username'] = 'Username';
+$string['skip'] = 'Skip to create new account';
+$string['login'] = 'login';
