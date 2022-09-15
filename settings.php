@@ -74,8 +74,7 @@ if ($ADMIN->fulltree) {
         get_string('minrequestperiod', 'auth_otp'),
         get_string('minrequestperiod_help', 'auth_otp')
     ) extends admin_setting_configtext {
-        public function __construct($name, $visiblename, $description)
-        {
+        public function __construct($name, $visiblename, $description) {
             $readers = get_log_manager()->get_readers('\core\log\sql_reader');
             $logreader = reset($readers);
             parent::__construct($name, $visiblename, $description, $logreader ? 300 : 0, PARAM_INT);
